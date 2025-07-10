@@ -43,7 +43,7 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
   <FirstNozzle>0</FirstNozzle>
   <NozzleSeparation>2</NozzleSeparation>
  </headConfiguration>
- <physicalChannels>5</physicalChannels>
+ <physicalChannels>6</physicalChannels>
  <resolutionScale>14400</resolutionScale>  <!-- TODO: check -->
  <minimumResolution>360 180</minimumResolution>  <!-- TODO: check -->
  <maximumResolution>5760 2880</maximumResolution>  <!-- TODO: check -->
