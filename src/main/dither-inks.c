@@ -268,6 +268,7 @@ stpi_dither_set_ranges(stp_vars_t *v, int color, const stp_shade_t *shade,
   STP_SAFE_FREE(dc->ranges);
   STP_SAFE_FREE(dc->ink_list);
 
+  STPI_ASSERT(nlevels > 0, v);
   dc->nlevels = nlevels > 1 ? nlevels + 1 : nlevels;
   dc->ranges = (stpi_dither_segment_t *)
     stp_zalloc(dc->nlevels * sizeof(stpi_dither_segment_t));
