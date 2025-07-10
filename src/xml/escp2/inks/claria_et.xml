@@ -19,7 +19,7 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see https://www.gnu.org/licenses/.
 </copyright>
-<escp2InkGroup name="claria_xp">
+<escp2InkGroup name="claria_et">
 <Curves>
  <curve name="cmykrCyan" wrap="wrap" type="linear" gamma="0" piecewise="false">
   <sequence count="48" lower-bound="0" upper-bound="1">
@@ -51,16 +51,6 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
 	1	0.875	0.75	0.625	0.5	0.375	0.25	0.125
   </sequence>
  </curve>
- <curve name="cmykrRed" wrap="wrap" type="linear" gamma="0" piecewise="false">
-  <sequence count="48" lower-bound="0" upper-bound="1">
-	0	0	0	0	0	0	0	0
-	0	0	0	0	0	0	0	0
-	0.025	0.4	0.6	0.75	0.89	1	1	1
-	1	0.875	0.75	0.625	0.5	0.375	0.25	0.125
-	0	0	0	0	0	0	0	0
-	0	0	0	0	0	0	0	0
-  </sequence>
- </curve>
 </Curves>
 
 <InkList translate="text" name="None" text="EPSON Standard Inks">
@@ -69,20 +59,16 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
   <shade count="1">1.000000</shade>
   <shade count="1">1.000000</shade>
   <shade count="1">1.000000</shade>
-  <shade count="1">1.000000</shade>
-  <shade count="1">1.000000</shade>
-  <shade count="1">1.000000</shade>
-  <shade count="1">1.000000</shade>
  </Shades>
 
- <InkName translate="text" name="CMYKk" text="Six Color Photo" InkID="OTHER">
+ <InkName translate="text" name="CMYKk" text="CMYKk matte" InkID="OTHER">
   <Channels>
-   <channel name="claria_photo_black" index="0">
+   <channel name="claria_black" index="0">
     <subchannel color="0" subchannel="0" name="Black" text="Black" translate="text">
      <ChannelDensityParam name="BlackDensity"/>
      <SubchannelTransitionParam name="LightBlackTrans"/>
     </subchannel>
-    <subchannel color="0" subchannel="1" headOffset="2" name="LightBlack" text="Light Black" translate="text">
+    <subchannel color="0" subchannel="1" headOffset="0" name="LightBlack" text="Light Black" translate="text">
      <ChannelDensityParam name="BlackDensity"/>
      <SubchannelTransitionParam name="GrayTrans"/>
      <SubchannelValueParam name="GrayValue"/>
@@ -92,62 +78,20 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
    <channel name="claria_cyan" index="1">
     <HueCurveParam name="CyanHueCurve"/>
     <HueCurve ref="cmykrCyan"/>
-    <subchannel color="2" subchannel="0" headOffset="2" name="Cyan" text="Cyan" translate="text">
+    <subchannel color="2" subchannel="0" headOffset="0" name="Cyan" text="Cyan" translate="text">
      <ChannelDensityParam name="CyanDensity"/>
     </subchannel>
    </channel>
    <channel name="claria_magenta" index="2">
     <HueCurveParam name="MagentaHueCurve"/>
     <HueCurve ref="cmykrMagenta"/>
-    <subchannel color="1" subchannel="0" headOffset="1" name="Magenta" text="Magenta" translate="text">
+    <subchannel color="1" subchannel="0" headOffset="0" name="Magenta" text="Magenta" translate="text">
      <ChannelDensityParam name="MagentaDensity"/>
     </subchannel>
    </channel>
    <channel name="claria_yellow" index="3">
     <HueCurveParam name="YellowHueCurve"/>
     <HueCurve ref="cmykrYellow"/>
-    <subchannel color="4" subchannel="0" headOffset="0" name="Yellow" text="Yellow" translate="text">
-     <ChannelDensityParam name="YellowDensity"/>
-    </subchannel>
-   </channel>
-   <channel name="claria_red" index="4">
-    <HueCurveParam name="RedHueCurve"/>
-    <HueCurve ref="cmykrRed"/>
-    <subchannel color="7" subchannel="0" headOffset="1" name="Red" text="Red" translate="text">
-     <ChannelDensityParam name="RedDensity"/>
-    </subchannel>
-   </channel>
-  </Channels>
- </InkName>
-
- <InkName translate="text" name="PhotoCMYKk" text="Five Color Photo" InkID="CMYKk">
-  <Channels>
-   <channel name="claria_black" index="0"> <!-- FIXME: not photo, for testing -->
-    <subchannel color="0" subchannel="0" headOffset="0" name="Black" text="Black" translate="text">
-     <ChannelDensityParam name="BlackDensity"/>
-     <SubchannelTransitionParam name="LightBlackTrans"/>
-    </subchannel>
-    <subchannel color="16" subchannel="0" headOffset="2" name="LightBlack" text="Light Black" translate="text">
-     <ChannelDensityParam name="BlackDensity"/>
-     <SubchannelTransitionParam name="GrayTrans"/>
-     <SubchannelValueParam name="GrayValue"/>
-     <SubchannelScaleParam name="GrayScale"/>
-    </subchannel>
-   </channel>
-   <channel name="claria_cyan" index="1">
-    <HueCurveParam name="CyanHueCurve"/>
-    <subchannel color="2" subchannel="0" headOffset="2" name="Cyan" text="Cyan" translate="text">
-     <ChannelDensityParam name="CyanDensity"/>
-    </subchannel>
-   </channel>
-   <channel name="claria_magenta" index="2">
-    <HueCurveParam name="MagentaHueCurve"/>
-    <subchannel color="1" subchannel="0" headOffset="1" name="Magenta" text="Magenta" translate="text">
-     <ChannelDensityParam name="MagentaDensity"/>
-    </subchannel>
-   </channel>
-   <channel name="claria_yellow" index="3">
-    <HueCurveParam name="YellowHueCurve"/>
     <subchannel color="4" subchannel="0" headOffset="0" name="Yellow" text="Yellow" translate="text">
      <ChannelDensityParam name="YellowDensity"/>
     </subchannel>
@@ -164,13 +108,13 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
    </channel>
    <channel name="claria_cyan" index="1">
     <HueCurveParam name="CyanHueCurve"/>
-    <subchannel color="2" subchannel="0" headOffset="2" name="Cyan" text="Cyan" translate="text">
+    <subchannel color="2" subchannel="0" headOffset="0" name="Cyan" text="Cyan" translate="text">
      <ChannelDensityParam name="CyanDensity"/>
     </subchannel>
    </channel>
    <channel name="claria_magenta" index="2">
     <HueCurveParam name="MagentaHueCurve"/>
-    <subchannel color="1" subchannel="0" headOffset="1" name="Magenta" text="Magenta" translate="text">
+    <subchannel color="1" subchannel="0" headOffset="0" name="Magenta" text="Magenta" translate="text">
      <ChannelDensityParam name="MagentaDensity"/>
     </subchannel>
    </channel>
@@ -187,13 +131,13 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
   <Channels>
    <channel name="claria_cyan" index="1">
     <HueCurveParam name="CyanHueCurve"/>
-    <subchannel color="2" headOffset="2" subchannel="2" name="Cyan" text="Cyan" translate="text">
+    <subchannel color="2" headOffset="0" subchannel="0" name="Cyan" text="Cyan" translate="text">
      <ChannelDensityParam name="CyanDensity"/>
     </subchannel>
    </channel>
    <channel name="claria_magenta" index="2">
     <HueCurveParam name="MagentaHueCurve"/>
-    <subchannel color="1" subchannel="0" headOffset="1" name="Magenta" text="Magenta" translate="text">
+    <subchannel color="1" subchannel="0" headOffset="0" name="Magenta" text="Magenta" translate="text">
      <ChannelDensityParam name="MagentaDensity"/>
     </subchannel>
    </channel>
@@ -201,41 +145,6 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
     <HueCurveParam name="YellowHueCurve"/>
     <subchannel color="4" subchannel="0" headOffset="0" name="Yellow" text="Yellow" translate="text">
      <ChannelDensityParam name="YellowDensity"/>
-    </subchannel>
-   </channel>
-  </Channels>
- </InkName>
-
- <InkName translate="text" name="PhysicalCMYKkR" text="Six Color Raw" InkID="Extended">
-  <Channels>
-   <channel name="claria_black" index="0">
-    <subchannel color="0" subchannel="0" headOffset="0" name="Black" text="Black" translate="text">
-     <ChannelDensityParam name="BlackDensity"/>
-    </subchannel>
-   </channel>
-   <channel name="claria_extended_black" index="1">
-    <subchannel color="0" subchannel="1" headOffset="2" name="LightBlack" text="Light Black" translate="text">
-     <ChannelDensityParam name="BlackDensity"/>
-    </subchannel>
-   </channel>
-   <channel name="claria_cyan" index="2">
-    <subchannel color="2" subchannel="0" headOffset="2" name="Cyan" text="Cyan" translate="text">
-     <ChannelDensityParam name="CyanDensity"/>
-    </subchannel>
-   </channel>
-   <channel name="claria_magenta" index="3">
-    <subchannel color="1" subchannel="0" headOffset="1" name="Magenta" text="Magenta" translate="text">
-     <ChannelDensityParam name="MagentaDensity"/>
-    </subchannel>
-   </channel>
-   <channel name="claria_yellow" index="4">
-    <subchannel color="4" subchannel="0" headOffset="0"  name="Yellow" text="Yellow" translate="text">
-     <ChannelDensityParam name="YellowDensity"/>
-    </subchannel>
-   </channel>
-   <channel name="claria_red" index="5">
-    <subchannel color="7" subchannel="0" headOffset="1" name="Red" text="Red" translate="text">
-     <ChannelDensityParam name="RedDensity"/>
     </subchannel>
    </channel>
   </Channels>
@@ -254,7 +163,7 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
     </subchannel>
    </channel>
    <channel name="claria_magenta" index="2">
-    <subchannel color="1" subchannel="0" headOffset="1" name="Magenta" text="Magenta" translate="text">
+    <subchannel color="1" subchannel="0" headOffset="0" name="Magenta" text="Magenta" translate="text">
      <ChannelDensityParam name="MagentaDensity"/>
     </subchannel>
    </channel>
@@ -264,7 +173,7 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
     </subchannel>
    </channel>
    <channel name="claria_extended_black" index="4">
-    <subchannel color="16" subchannel="0" headOffset="1" name="LightBlack" text="Light Black" translate="text">
+    <subchannel color="16" subchannel="0" headOffset="0" name="LightBlack" text="Light Black" translate="text">
      <ChannelDensityParam name="BlackDensity"/>
     </subchannel>
    </channel>
