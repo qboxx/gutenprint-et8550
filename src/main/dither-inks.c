@@ -348,6 +348,8 @@ stp_dither_set_inks_simple(stp_vars_t *v, int color, int nlevels,
   stp_shade_t s;
   stp_dotsize_t *d = stp_malloc(nlevels * sizeof(stp_dotsize_t));
   int i;
+
+  STPI_ASSERT(nlevels > 0, v);
   s.dot_sizes = d;
   s.value = 65535.0;
   s.numsizes = nlevels;
@@ -396,6 +398,7 @@ stp_dither_set_inks(stp_vars_t *v, int color, double density, double darkness,
   stp_shade_t *shades = stp_malloc(sizeof(stp_shade_t) * nshades);
   stp_dotsize_t *dotsizes = stp_malloc(sizeof(stp_dotsize_t) * ndotsizes);
   j = 0;
+  STPI_ASSERT(ndotsizes > 0, NULL);
   for (i = 0; i < ndotsizes; i++)
     {
       /* Skip over any zero-valued dot sizes */
@@ -410,6 +413,7 @@ stp_dither_set_inks(stp_vars_t *v, int color, double density, double darkness,
     {
       shades[i].value = svalues[i];
       shades[i].numsizes = j;
+      STPI_ASSERT(j > 0, NULL);
       shades[i].dot_sizes = dotsizes;
     }
   stp_dither_set_inks_full(v, color, nshades, shades, density, darkness);
