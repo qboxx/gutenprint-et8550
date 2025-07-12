@@ -185,3 +185,5 @@ xml-stamp
 
 # Things that we *do* need
 !src/xml/printers
+src/cups/ppdtest
+.cache
