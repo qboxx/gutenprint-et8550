@@ -188,3 +188,4 @@ xml-stamp
 src/cups/ppdtest
 .cache
 src/testpattern/printraw
+.direnv/
