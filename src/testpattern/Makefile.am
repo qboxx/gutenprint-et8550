@@ -38,6 +38,9 @@ testpattern.o: testpatterny.o
 printers_LDADD = $(GUTENPRINT_LIBS)
 printer_options_LDADD = $(GUTENPRINT_LIBS)
 
+printraw_SOURCES = printraw.c
+printraw_LDADD = $(GUTENPRINT_LIBS) $(LIBM) $(TIFF_LIBS)
+printraw_CFLAGS = $(TIFF_CFLAGS)
 
 ## Data
 
@@ -53,7 +56,7 @@ run-testpattern-2.test: run-testpattern-2
 TESTS = run-testpattern-1.test run-testpattern-2.test
 run-testpattern-2.log: run-testpattern-1.log
 
-bin_PROGRAMS = testpattern
+bin_PROGRAMS = testpattern printraw
 noinst_PROGRAMS = printers printer_options
 noinst_SCRIPTS = run-testpattern-2 compare-checksums compress-checksums \
 	run-testpattern-2.test run-testpattern-1.test

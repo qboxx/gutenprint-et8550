@@ -215,7 +215,7 @@ AM_MAINTAINER_MODE
 if test x${USE_MAINTAINER_MODE} = xyes ; then
   MAINTAINER_MODE="true"
   BUILD_TEST="yes"
-  BUILD_DOC="yes"
+  BUILD_DOC="no"
   AC_DEFINE(HAVE_MAINTAINER_MODE,, [Define if maintainer-mode is to be used.])
 fi
 
@@ -464,6 +464,17 @@ AS_IF([test "x$BUILD_CUPS" = "xyes"], [
 	            BUILD_LIBUSB_BACKENDS=no])
 ])
 
+PKG_CHECK_MODULES([TIFF], [libtiff-4], [
+        HAVE_LIBTIFF=yes
+], [
+        AC_MSG_ERROR([libtiff-4 is required but was not found. Please install libtiff-4 development files.])
+])
+# Not needed by gutenprint but by src/testpattern/printraw
+# GUTENPRINT_LIBDEPS="${GUTENPRINT_LIBDEPS} ${TIFF_LIBS}"
+# gutenprint_libdeps="${gutenprint_libdeps} ${TIFF_LIBS}"
+AC_SUBST(TIFF_CFLAGS)
+AC_SUBST(TIFF_LIBS)
+
 STP_ARG_ENABLE([user-install],
                [install GIMP plugin in home directory],
                [USER_INSTALL],
@@ -552,7 +563,7 @@ STP_ARG_ENABLE([test],
 STP_ARG_WITH([doc],
 	     [build Gutenprint documentation],
 	     [BUILD_DOC],
-	     [yes])
+	     [no])
 
 if test "$BUILD_TEST" = "yes" ; then
   BUILD_TESTPATTERN="yes"

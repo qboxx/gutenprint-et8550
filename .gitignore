@@ -187,3 +187,4 @@ xml-stamp
 !src/xml/printers
 src/cups/ppdtest
 .cache
+src/testpattern/printraw
