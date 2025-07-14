@@ -1559,10 +1559,10 @@ get_resolution_bounds_by_paper_type(const stp_vars_t *v,
 	  *max_y = escp2_base_separation(v) * 2;
 	  break;
 	}
-      stp_dprintf(STP_DBG_ESCP2, v,
-		  "Paper %s class %d: min_x %d min_y %d max_x %d max_y %d\n",
-		  paper->text, paper->paper_class, *min_x, *min_y,
-		  *max_x, *max_y);
+      // stp_dprintf(STP_DBG_ESCP2, v,
+		  // "Paper %s class %d: min_x %d min_y %d max_x %d max_y %d\n",
+		  // paper->text, paper->paper_class, *min_x, *min_y,
+		  // *max_x, *max_y);
     }
 }
 
@@ -1654,8 +1654,8 @@ get_printer_resolution_bounds(const stp_vars_t *v,
 	    *min_y = res->printed_vres;
 	}
     }
-  stp_dprintf(STP_DBG_ESCP2, v,
-	      "Printer bounds: %d %d %d %d\n", *min_x, *min_y, *max_x, *max_y);
+  // stp_dprintf(STP_DBG_ESCP2, v,
+	//       "Printer bounds: %d %d %d %d\n", *min_x, *min_y, *max_x, *max_y);
 }
 
 static int
@@ -2063,9 +2063,9 @@ find_default_resolution(const stp_vars_t *v, const quality_t *q, int strict)
 {
   const resolution_list_t *resolutions = escp2_reslist(v);
   unsigned int i = 0;
-  stp_dprintf(STP_DBG_ESCP2, v, "Quality %s: min %d %d max %d %d, des %d %d\n",
-	      q->name, q->min_hres, q->min_vres, q->max_hres, q->max_vres,
-	      q->desired_hres, q->desired_vres);
+  // stp_dprintf(STP_DBG_ESCP2, v, "Quality %s: min %d %d max %d %d, des %d %d\n",
+	//       q->name, q->min_hres, q->min_vres, q->max_hres, q->max_vres,
+	//       q->desired_hres, q->desired_vres);
   if (q->desired_hres < 0 || q->desired_vres < 0)
     {
       for (i = resolutions->n_resolutions; i > 0; i--)
@@ -2088,10 +2088,10 @@ find_default_resolution(const stp_vars_t *v, const quality_t *q, int strict)
       unsigned desired_hres = q->desired_hres;
       unsigned desired_vres = q->desired_vres;
       get_resolution_bounds_by_paper_type(v, &max_x, &max_y, &min_x, &min_y);
-      stp_dprintf(STP_DBG_ESCP2, v, "  Comparing hres %d to %d, %d\n",
-		  desired_hres, min_x, max_x);
-      stp_dprintf(STP_DBG_ESCP2, v, "  Comparing vres %d to %d, %d\n",
-		  desired_vres, min_y, max_y);
+      // stp_dprintf(STP_DBG_ESCP2, v, "  Comparing hres %d to %d, %d\n",
+		  // desired_hres, min_x, max_x);
+      // stp_dprintf(STP_DBG_ESCP2, v, "  Comparing vres %d to %d, %d\n",
+		  // desired_vres, min_y, max_y);
       if (max_x > 0 && desired_hres > max_x)
 	{
 	  stp_dprintf(STP_DBG_ESCP2, v, "  Decreasing hres from %d to %d\n",
@@ -2123,10 +2123,10 @@ find_default_resolution(const stp_vars_t *v, const quality_t *q, int strict)
 	      res->printed_vres == desired_vres &&
 	      res->printed_hres == desired_hres)
 	    {
-	      stp_dprintf(STP_DBG_ESCP2, v,
-			  "  Found desired resolution w/o oversample: %s %d: %d * %d, %d\n",
-			  res->name, i, res->printed_hres,
-			  res->vertical_passes, res->printed_vres);
+	      // stp_dprintf(STP_DBG_ESCP2, v,
+			  // "  Found desired resolution w/o oversample: %s %d: %d * %d, %d\n",
+			  // res->name, i, res->printed_hres,
+			  // res->vertical_passes, res->printed_vres);
 	      return res;
 	    }
 	}
@@ -2191,8 +2191,8 @@ verify_quality(const stp_vars_t *v, const quality_t *q)
       (q->max_hres == 0 || min_x <= q->max_hres) &&
       (q->min_hres == 0 || max_x >= q->min_hres))
     {
-      stp_dprintf(STP_DBG_ESCP2, v, "Quality %s OK: %d %d %d %d\n",
-		  q->text, q->min_hres, q->min_vres, q->max_hres, q->max_vres);
+      // stp_dprintf(STP_DBG_ESCP2, v, "Quality %s OK: %d %d %d %d\n",
+		  // q->text, q->min_hres, q->min_vres, q->max_hres, q->max_vres);
       return 1;
     }
   else
@@ -2910,10 +2910,10 @@ stpi_escp2_find_resolution(const stp_vars_t *v)
 				     0);
       if (default_res)
 	{
-	  stp_dprintf(STP_DBG_ESCP2, v,
-		      "Setting resolution to %s from quality %s\n",
-		      default_res->name,
-		      stp_get_string_parameter(v, "Quality"));
+	  // stp_dprintf(STP_DBG_ESCP2, v,
+		//       "Setting resolution to %s from quality %s\n",
+		//       default_res->name,
+		//       stp_get_string_parameter(v, "Quality"));
 	  return default_res;
 	}
       else
