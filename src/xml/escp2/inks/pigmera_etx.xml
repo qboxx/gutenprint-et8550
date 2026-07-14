@@ -19,7 +19,13 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see https://www.gnu.org/licenses/.
 </copyright>
-<escp2InkGroup name="claria_et">
+<!--
+  Experimental Epson ET-8550 profile for Farbenwerk Pigmera ETX pigment ink.
+  Physically validated by elongmugs on glossy die-cut label media.
+  This is not a stock Epson Claria profile.
+-->
+
+<escp2InkGroup name="pigmera_etx">
 <Curves>
  <curve name="cmykrCyan" wrap="wrap" type="linear" gamma="0" piecewise="false">
   <sequence count="48" lower-bound="0" upper-bound="1">
@@ -53,7 +59,7 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
  </curve>
 </Curves>
 
-<InkList translate="text" name="None" text="EPSON Standard Inks">
+<InkList translate="text" name="None" text="Farbenwerk Pigmera ETX Pigment Inks">
  <Shades>
   <!--<shade count="2">1.000000 0.250000</shade>-->
   <shade count="2">1.000000 0.250000</shade>
@@ -67,11 +73,11 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
  <InkName translate="text" name="CMYKk" text="Six Color Photo" InkID="OTHER">
   <Channels>
    <channel name="claria_black" index="0">
-    <subchannel color="0" subchannel="0" name="Black" text="Black" translate="text">
+    <subchannel color="64" subchannel="0" headOffset="0" name="PhotoBlack" text="Photo Black" translate="text">
      <ChannelDensityParam name="BlackDensity"/>
      <SubchannelTransitionParam name="LightBlackTrans"/>
     </subchannel>
-    <subchannel color="0" subchannel="1" headOffset="0" name="LightBlack" text="Light Black" translate="text">
+    <subchannel color="16" subchannel="1" headOffset="0" name="Gray" text="Gray" translate="text">
      <ChannelDensityParam name="BlackDensity"/>
      <SubchannelTransitionParam name="GrayTrans"/>
      <SubchannelValueParam name="GrayValue"/>
@@ -80,21 +86,18 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
    </channel>
    <channel name="claria_cyan" index="1">
     <HueCurveParam name="CyanHueCurve"/>
-    <HueCurve ref="cmykrCyan"/>
     <subchannel color="2" subchannel="0" headOffset="0" name="Cyan" text="Cyan" translate="text">
      <ChannelDensityParam name="CyanDensity"/>
     </subchannel>
    </channel>
    <channel name="claria_magenta" index="2">
     <HueCurveParam name="MagentaHueCurve"/>
-    <HueCurve ref="cmykrMagenta"/>
     <subchannel color="1" subchannel="0" headOffset="0" name="Magenta" text="Magenta" translate="text">
      <ChannelDensityParam name="MagentaDensity"/>
     </subchannel>
    </channel>
    <channel name="claria_yellow" index="3">
     <HueCurveParam name="YellowHueCurve"/>
-    <HueCurve ref="cmykrYellow"/>
     <subchannel color="4" subchannel="0" headOffset="0" name="Yellow" text="Yellow" translate="text">
      <ChannelDensityParam name="YellowDensity"/>
     </subchannel>
@@ -177,6 +180,11 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
    </channel>
    <channel name="claria_extended_black" index="4">
     <subchannel color="16" subchannel="0" headOffset="0" name="LightBlack" text="Light Black" translate="text">
+     <ChannelDensityParam name="BlackDensity"/>
+    </subchannel>
+   </channel>
+   <channel name="claria_photo_black" index="5">
+    <subchannel color="64" subchannel="0" headOffset="0" name="PhotoBlack" text="Photo Black" translate="text">
      <ChannelDensityParam name="BlackDensity"/>
     </subchannel>
    </channel>

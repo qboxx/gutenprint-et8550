@@ -23,7 +23,7 @@ xsi:schemaLocation="http://gimp-print.sourceforge.net/xsd/gp.xsd-1.0 gutenprint.
  <media src="escp2/media/claria_xp.xml"/>
  <inputSlots src="escp2/inputslots/rx680.xml"/>
  <qualityPresets src="escp2/qualitypresets/standard.xml"/>
- <inkGroup src="escp2/inks/claria_et.xml"/>
+ <inkGroup src="escp2/inks/pigmera_etx.xml"/>
  <mediaSizes src="escp2/mediasizes/standard.xml"/>
  <verticalBorderlessSequence>US\003\000\000\000\002</verticalBorderlessSequence>
  <preinitSequence>\000\000\000\033\001@EJL\0401284.4\012@EJL\040\040\040\040\040\012\033@</preinitSequence>

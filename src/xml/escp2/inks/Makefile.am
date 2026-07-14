@@ -32,6 +32,7 @@ pkgxmldata_DATA =				\
 	c82.xml					\
 	claria.xml				\
 	claria_et.xml				\
+	pigmera_etx.xml \
 	claria_xp.xml				\
 	cmy.xml					\
 	cmykrb.xml				\

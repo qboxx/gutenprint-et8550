@@ -86,3 +86,15 @@ This work is experimental and currently validated only for the tested combinatio
 
 Stock Epson ink, other pigment conversions, and other media will require their
 own physical calibration.
+
+## Profile separation
+
+The ET-8550 Pigmera branch now keeps the two ink systems separate:
+
+- `claria_et.xml` is restored to the original upstream Epson Claria definition.
+- `pigmera_etx.xml` contains the physically validated Pigmera ETX PB/GY and raw
+  six-channel architecture.
+- ET-8550 model 139 explicitly loads `pigmera_etx.xml` on this branch.
+
+This prevents the Pigmera conversion from being misrepresented as a stock Epson
+Claria configuration.

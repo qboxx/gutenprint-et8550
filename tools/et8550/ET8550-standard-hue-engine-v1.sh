@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SRC="$HOME/gutenprint-et8550/src/xml/escp2/inks/claria_et.xml"
-DST="/opt/gutenprint-et8550/share/gutenprint/5.3/xml/escp2/inks/claria_et.xml"
+SRC="$HOME/gutenprint-et8550/src/xml/escp2/inks/pigmera_etx.xml"
+DST="/opt/gutenprint-et8550/share/gutenprint/5.3/xml/escp2/inks/pigmera_etx.xml"
 BACKUP="${SRC}.before-standard-hue-engine-v1"
 
 ACTION="${1:-status}"
