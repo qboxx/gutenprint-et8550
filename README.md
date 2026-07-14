@@ -8,3 +8,8 @@ direct 1440 × 1440 Gutenprint mode and six-channel diagnostics.
 
 See [`docs/ET8550-PIGMERA-CALIBRATION.md`](docs/ET8550-PIGMERA-CALIBRATION.md).
 <!-- /ET8550_PIGMERA_CALIBRATION -->
+
+## Project status and TODO
+
+See [`TODO.md`](TODO.md) for the remaining public driver, color-calibration,
+media-profile and installation work.
