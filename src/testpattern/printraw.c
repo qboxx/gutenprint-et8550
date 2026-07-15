@@ -1,12 +1,15 @@
 /*
- * 5-Channel TIFF to Raw Printer Data Converter
+ * Multi-Channel TIFF to Raw Printer Data Converter
  *
- * This program reads a 5-channel TIFF file and converts it to raw printer
- * commands using Gutenprint's dithering and rasterization engine.
- * It feeds 8-bit channel data directly to the Raw input mode, allowing
+ * This program reads a contiguous 8-bit separated TIFF file and converts it
+ * to raw printer commands using Gutenprint's dithering and rasterization
+ * engine. It feeds the TIFF channel data directly to Raw input mode, allowing
  * DeviceN printing with full dithering.
  *
- * It expects the TIFF to be CMYKk.
+ * Input channel order is CMYK followed by any additional spot channels.
+ * Gutenprint's raw Epson path expects KCMY followed by those spot channels,
+ * so the first four samples are reordered while all extra samples are copied
+ * unchanged.
  */
 
 #include <gutenprint/gutenprint-intl.h>
@@ -17,7 +20,8 @@
 #include <tiffio.h>
 #include <unistd.h>
 
-#define NUM_CHANNELS 5
+#define MIN_CHANNELS 4
+#define MAX_CHANNELS 16
 
 static FILE *output = NULL;
 static const char *global_printer = NULL;
@@ -53,20 +57,18 @@ static stp_image_status_t Image_get_row(stp_image_t *image, unsigned char *data,
     fprintf(stderr, "Failed to read row %d from TIFF\n", row);
     return STP_IMAGE_STATUS_ABORT;
   }
-  // The TIFF is CMYKk, but the printer expects KCMYk, so we reorder the
-  // channels. CMYKk -> kCMYk
-  for (int i = 0; i < tiff_width; i++) {
-    unsigned char k = tiff_scanline[i * NUM_CHANNELS + 3];
-    unsigned char c = tiff_scanline[i * NUM_CHANNELS + 0];
-    unsigned char m = tiff_scanline[i * NUM_CHANNELS + 1];
-    unsigned char y = tiff_scanline[i * NUM_CHANNELS + 2];
-    // Reorder to KCMYk
-    tiff_scanline[i * NUM_CHANNELS + 0] = k; // K
-    tiff_scanline[i * NUM_CHANNELS + 1] = c; // C
-    tiff_scanline[i * NUM_CHANNELS + 2] = m; // M
-    tiff_scanline[i * NUM_CHANNELS + 3] = y; // Y
+  /* Reorder CMYK[spots...] to KCMY[spots...] without modifying the TIFF
+     scanline buffer. */
+  for (uint32_t i = 0; i < tiff_width; i++) {
+    const unsigned char *src = &tiff_scanline[i * samples_per_pixel];
+    unsigned char *dst = &data[i * samples_per_pixel];
+    dst[0] = src[3]; /* K */
+    dst[1] = src[0]; /* C */
+    dst[2] = src[1]; /* M */
+    dst[3] = src[2]; /* Y */
+    for (uint16_t channel = 4; channel < samples_per_pixel; channel++)
+      dst[channel] = src[channel];
   }
-  memcpy(data, tiff_scanline, tiff_width * NUM_CHANNELS);
   return STP_IMAGE_STATUS_OK;
 }
 
@@ -140,9 +142,20 @@ int main(int argc, char **argv) {
   TIFFGetField(input_tiff, TIFFTAG_IMAGEWIDTH, &tiff_width);
   TIFFGetField(input_tiff, TIFFTAG_IMAGELENGTH, &tiff_height);
   TIFFGetField(input_tiff, TIFFTAG_SAMPLESPERPIXEL, &samples_per_pixel);
-  if (samples_per_pixel != NUM_CHANNELS) {
-    fprintf(stderr, "Expected %d channels, got %d\n", NUM_CHANNELS,
-            samples_per_pixel);
+  uint16_t bits_per_sample = 0;
+  uint16_t planar_config = PLANARCONFIG_CONTIG;
+  TIFFGetFieldDefaulted(input_tiff, TIFFTAG_BITSPERSAMPLE, &bits_per_sample);
+  TIFFGetFieldDefaulted(input_tiff, TIFFTAG_PLANARCONFIG, &planar_config);
+  if (samples_per_pixel < MIN_CHANNELS || samples_per_pixel > MAX_CHANNELS) {
+    fprintf(stderr, "Expected between %d and %d channels, got %u\n",
+            MIN_CHANNELS, MAX_CHANNELS, samples_per_pixel);
+    TIFFClose(input_tiff);
+    return 1;
+  }
+  if (bits_per_sample != 8 || planar_config != PLANARCONFIG_CONTIG) {
+    fprintf(stderr,
+            "Expected contiguous 8-bit samples, got bits=%u planar=%u\n",
+            bits_per_sample, planar_config);
     TIFFClose(input_tiff);
     return 1;
   }
@@ -153,10 +166,10 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  // sanity check: scanline size should be tiff_width * NUM_CHANNELS
-  if (tiff_scanline_size != tiff_width * NUM_CHANNELS) {
+  /* Sanity check: one contiguous byte per channel and pixel. */
+  if (tiff_scanline_size != tiff_width * samples_per_pixel) {
     fprintf(stderr, "Scanline size mismatch: expected %zu, got %zu\n",
-            (size_t)tiff_width * NUM_CHANNELS, tiff_scanline_size);
+            (size_t)tiff_width * samples_per_pixel, tiff_scanline_size);
     TIFFClose(input_tiff);
     return 1;
   }
@@ -199,8 +212,11 @@ int main(int argc, char **argv) {
   // stp_set_string_parameter(v, "Resolution", "1440x1440ov");
   stp_set_string_parameter(v, "Resolution", "720sw");
   stp_set_string_parameter(v, "InputImageType", "Raw");
+  stp_set_string_parameter(v, "ColorCorrection", "Raw");
   stp_set_string_parameter(v, "ChannelBitDepth", "8");
-  stp_set_string_parameter(v, "RawChannels", "5");
+  char raw_channels[16];
+  snprintf(raw_channels, sizeof(raw_channels), "%u", samples_per_pixel);
+  stp_set_string_parameter(v, "RawChannels", raw_channels);
   stp_set_float_parameter(v, "Density", 1.0);
   stp_set_string_parameter(v, "Quality", "None");
   stp_set_string_parameter(v, "ImageType", "None");
