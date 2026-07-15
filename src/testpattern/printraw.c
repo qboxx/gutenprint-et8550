@@ -1,15 +1,15 @@
 /*
- * Multi-Channel TIFF to Raw Printer Data Converter
+ * RGB and Multi-Channel TIFF to Printer Data Converter
  *
- * This program reads a contiguous 8-bit separated TIFF file and converts it
- * to raw printer commands using Gutenprint's dithering and rasterization
- * engine. It feeds the TIFF channel data directly to Raw input mode, allowing
- * DeviceN printing with full dithering.
+ * This program reads either a contiguous 8-bit RGB TIFF or a contiguous
+ * 8-bit separated TIFF and converts it to printer commands using Gutenprint's
+ * colour conversion, dithering, and rasterization engine.
  *
- * Input channel order is CMYK followed by any additional spot channels.
- * Gutenprint's raw Epson path expects KCMY followed by those spot channels,
- * so the first four samples are reordered while all extra samples are copied
- * unchanged.
+ * RGB input is passed to Gutenprint as RGB with Accurate colour correction.
+ * Separated input is fed directly to Raw mode for DeviceN printing. Raw input
+ * channel order is CMYK followed by any additional spot channels. Gutenprint's
+ * raw Epson path expects KCMY followed by those spot channels, so the first
+ * four samples are reordered while all extra samples are copied unchanged.
  */
 
 #include <gutenprint/gutenprint-intl.h>
@@ -31,6 +31,7 @@ static TIFF *input_tiff = NULL;
 static uint32_t tiff_width = 0;
 static uint32_t tiff_height = 0;
 static uint16_t samples_per_pixel = 0;
+static int input_is_rgb = 0;
 static unsigned char *tiff_scanline = NULL;
 static size_t tiff_scanline_size = 0;
 static const char *input_filename = NULL;
@@ -57,6 +58,11 @@ static stp_image_status_t Image_get_row(stp_image_t *image, unsigned char *data,
     fprintf(stderr, "Failed to read row %d from TIFF\n", row);
     return STP_IMAGE_STATUS_ABORT;
   }
+  if (input_is_rgb) {
+    memcpy(data, tiff_scanline, tiff_scanline_size);
+    return STP_IMAGE_STATUS_OK;
+  }
+
   /* Reorder CMYK[spots...] to KCMY[spots...] without modifying the TIFF
      scanline buffer. */
   for (uint32_t i = 0; i < tiff_width; i++) {
@@ -144,11 +150,19 @@ int main(int argc, char **argv) {
   TIFFGetField(input_tiff, TIFFTAG_SAMPLESPERPIXEL, &samples_per_pixel);
   uint16_t bits_per_sample = 0;
   uint16_t planar_config = PLANARCONFIG_CONTIG;
+  uint16_t photometric = 0;
   TIFFGetFieldDefaulted(input_tiff, TIFFTAG_BITSPERSAMPLE, &bits_per_sample);
   TIFFGetFieldDefaulted(input_tiff, TIFFTAG_PLANARCONFIG, &planar_config);
-  if (samples_per_pixel < MIN_CHANNELS || samples_per_pixel > MAX_CHANNELS) {
-    fprintf(stderr, "Expected between %d and %d channels, got %u\n",
-            MIN_CHANNELS, MAX_CHANNELS, samples_per_pixel);
+  TIFFGetFieldDefaulted(input_tiff, TIFFTAG_PHOTOMETRIC, &photometric);
+  input_is_rgb = photometric == PHOTOMETRIC_RGB && samples_per_pixel == 3;
+  int input_is_raw = photometric == PHOTOMETRIC_SEPARATED &&
+                     samples_per_pixel >= MIN_CHANNELS &&
+                     samples_per_pixel <= MAX_CHANNELS;
+  if (!input_is_rgb && !input_is_raw) {
+    fprintf(stderr,
+            "Expected RGB/3 or separated raw/%d-%d TIFF, got "
+            "photometric=%u channels=%u\n",
+            MIN_CHANNELS, MAX_CHANNELS, photometric, samples_per_pixel);
     TIFFClose(input_tiff);
     return 1;
   }
@@ -211,15 +225,21 @@ int main(int argc, char **argv) {
   stp_set_errdata(v, stderr);
   // stp_set_string_parameter(v, "Resolution", "1440x1440ov");
   stp_set_string_parameter(v, "Resolution", "720sw");
-  stp_set_string_parameter(v, "InputImageType", "Raw");
-  stp_set_string_parameter(v, "ColorCorrection", "Raw");
   stp_set_string_parameter(v, "ChannelBitDepth", "8");
-  char raw_channels[16];
-  snprintf(raw_channels, sizeof(raw_channels), "%u", samples_per_pixel);
-  stp_set_string_parameter(v, "RawChannels", raw_channels);
+  if (input_is_rgb) {
+    stp_set_string_parameter(v, "InputImageType", "RGB");
+    stp_set_string_parameter(v, "ColorCorrection", "Accurate");
+    stp_set_string_parameter(v, "ImageType", "Photo");
+  } else {
+    stp_set_string_parameter(v, "InputImageType", "Raw");
+    stp_set_string_parameter(v, "ColorCorrection", "Raw");
+    char raw_channels[16];
+    snprintf(raw_channels, sizeof(raw_channels), "%u", samples_per_pixel);
+    stp_set_string_parameter(v, "RawChannels", raw_channels);
+    stp_set_string_parameter(v, "ImageType", "None");
+  }
   stp_set_float_parameter(v, "Density", 1.0);
   stp_set_string_parameter(v, "Quality", "None");
-  stp_set_string_parameter(v, "ImageType", "None");
   stp_set_string_parameter(v, "PageSize", "A4");
 
   stp_dimension_t left, top, bottom, right;
