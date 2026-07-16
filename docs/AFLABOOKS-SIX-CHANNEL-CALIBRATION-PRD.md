@@ -1,8 +1,10 @@
-# Afla_books six-channel print-to-qbox calibration — PRD
+# Afla_books six-channel print-to-qbox calibration — future-extension PRD
 
-> **Status:** Canonical mission record. No print candidate is authorised by this document.
+> **Status:** Future ET-8550 extension only. No print candidate is authorised by this document.
 >
-> **Primary outcome:** A reproducible calibration loop that converts an Afla_books visual/UV target into a measured six-reservoir print, captures it in qbox10, measures the result, and safely improves the next print.
+> **Scope correction — 2026-07-16:** The active project is the current ET-2856 four-channel normal-colour RGB/JPEG calibration loop documented in `docs/AFLABOOKS-FOUR-CHANNEL-RGB-JPEG-CALIBRATION-PRD.md`. The ET-8550 normally expects PB and GY; a later conversion may use UV cyan and UV yellow, but that mapping and work are out of scope here.
+>
+> **Future outcome:** A reproducible extension that converts an Afla_books visual/UV target into a measured six-reservoir print, captures it in qbox10, measures the result, and safely improves the next print.
 
 ## 1. The mission
 
@@ -25,34 +27,35 @@ The result is not a one-off attractive chart. It is a reusable system that can b
 | Platform | Reservoirs being calibrated | Role |
 |---|---|---|
 | Current Epson ET-2856 proof printer | C, M, Y, K | Prove the qbox10 measurement, audit, reporting, and iterative-update software. It is **not** a source of transferable six-channel coefficients. |
-| Future Epson ET-8550 | BK, C, M, Y, GY, PB | Production calibration platform. The grey (`GY`) and photo-black (`PB`) reservoirs will hold two distinct UV inks, referred to here as `UV_GY` and `UV_PB`. |
+| Future Epson ET-8550 | BK, C, M, Y, GY, PB | Future platform. It normally expects grey (`GY`) and photo black (`PB`). A later UV-yellow/UV-cyan conversion must be separately specified and re-characterised. |
 
-The existing ET-8550 raw diagnostic record establishes the physical raw-channel order:
-
-```text
-raw stream index:  0   1  2  3   4     5
-physical channel: BK   C  M  Y  GY    PB
-Afla_books ink:   BK   C  M  Y  UV_GY UV_PB
-```
-
-The calibration source and the raw transport must **not** be confused. The canonical source/model order is deliberately:
+The existing ET-8550 raw diagnostic record establishes the normal physical raw-channel order:
 
 ```text
-u_source = [C, M, Y, BK, UV_GY, UV_PB]
-u_raw    = [BK, C, M, Y, UV_GY, UV_PB]
+raw stream index:  0   1  2  3   4   5
+physical channel: BK   C  M  Y  GY  PB
 ```
 
-The Gutenprint raw adapter performs this source-to-raw reordering; its decoded output must prove it on every run. This mapping is a hardware fact to audit before every six-channel run. It does **not** prove that UV ink behaves like the former grey/photo-black ink.
+The calibration source and the raw transport must **not** be confused. The normal six-reservoir source/model order is deliberately:
+
+```text
+u_source = [C, M, Y, BK, GY, PB]
+u_raw    = [BK, C, M, Y, GY, PB]
+```
+
+Any future UV conversion must declare its own source labels, physical reservoir mapping, material compatibility record and decoded-stream proof. It must not inherit assumptions from normal GY/PB ink.
 
 ## 2. Required control boundary
 
 We control **coverage fields and masks**, not individual droplets in the first implementation.
 
-For every source location `x, y`, the logical input is a six-element coverage vector in the canonical source order:
+For every source location `x, y`, a future six-reservoir job will use a six-element coverage vector in the normal source order:
 
 ```text
-u(x,y) = [C, M, Y, BK, UV_GY, UV_PB]  where each channel is in [0, 1]
+u(x,y) = [C, M, Y, BK, GY, PB]  where each channel is in [0, 1]
 ```
+
+If UV inks are later introduced, the final two labels and their physical reservoir mapping must be explicitly versioned; they are not part of the active four-channel implementation.
 
 - The calibration system chooses coverage values per patch/region and produces six explicit raster planes.
 - A frozen, audited Gutenprint/raw pipeline converts those planes into the printer’s halftone and droplet pattern.
@@ -69,7 +72,7 @@ Before a physical calibration chart may be printed, the run must record and audi
 - source raster format, channel count/order, dimensions, resolution and SHA-256;
 - Gutenprint revision, printer definition, all print options, dithering, colour correction and raw-stream decoder result;
 - exact printer spool hash and decoded channel-plane verification;
-- a dry/diagnostic test proving that `UV_GY` and `UV_PB` appear only in their approved masks;
+- a dry/diagnostic test proving that any future converted spot channels appear only in their approved masks;
 - no scaling, driver colour conversion, or automatic RGB separation.
 
 Raw LPR transmission of TIFF/PNG/PDF bytes is forbidden. A file is not a printer language merely because its pixels have CMYK values. The raw print stream must be generated by the supported Gutenprint path and decoded/audited before submission.
@@ -83,7 +86,7 @@ Each printed calibration sheet is placed in qbox10 and captured with immutable s
 | Capture | Purpose |
 |---|---|
 | White illumination RAW/DNG + derivative | Visible colour, density/opacity, bleed, gutter contamination and interior uniformity |
-| UV illumination RAW/DNG + derivative | UV response of `UV_GY` and `UV_PB`, UV bleed, UV uniformity and any interaction with visible inks |
+| UV illumination RAW/DNG + derivative | Future-only capture for the later two converted spot inks, their bleed and their interaction with visible inks |
 | Dark/flat references | Correct camera noise and field illumination before comparison |
 
 Every capture records qbox ID, camera settings, lens position, LED setting, dark/flat IDs and file hashes. Fiducials register the page before any patch is measured. A report must state whether all four were observed or whether a validated three-corner parallelogram inference was used.
@@ -110,7 +113,7 @@ The next chart/master geometry is a **centred 160 × 160 mm active target** on A
 The calibration design is not an exhaustive six-dimensional grid. It contains:
 
 1. **Spatial repeat controls** — blank paper, neutral/density controls, visible primaries and UV-only controls repeated across the page to estimate qbox and print variability.
-2. **Single-channel ramps** — BK, C, M, Y, `UV_GY`, and `UV_PB` at safe coverage levels to learn monotonic response and first onset of bleed/saturation.
+2. **Single-channel ramps** — BK, C, M, Y, GY and PB at safe coverage levels to learn normal six-reservoir response; any later converted spot channels receive a separately designed chart.
 3. **Relevant interaction patches** — visible pairs and UV/visible interactions, especially the UV masks used by Afla_books.
 4. **Stratified all-channel samples** — a deterministic space-filling design inside measured safe limits; it is expanded only where data show uncertainty.
 5. **Held-out patches** — never used to fit the update model; they decide whether an iteration actually improved.
@@ -217,9 +220,10 @@ decision.json              explicit authorisation or rejection reasons
 - Verify the existing six-channel raw mapping and raw-spool decoder using known compatible inks/media.
 - Capture baseline behaviour of all six physical channels.
 
-### Phase C — ET-8550 with `UV_GY` and `UV_PB`
+### Phase C — ET-8550 after a separately approved UV-yellow/UV-cyan conversion
 
 - Complete ink/material compatibility, flushing and hardware safety sign-off separately.
+- Declare the exact physical reservoir mapping before the first converted-ink chart.
 - Re-run channel mapping and low-coverage diagnostic charts from zero.
 - Build the six-channel response model from new physical evidence; do not reuse Pigmera/stock-Epson coefficients.
 - Run held-out validation before using the result for Afla_books printing.
