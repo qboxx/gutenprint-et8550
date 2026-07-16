@@ -35,16 +35,23 @@ physical channel: BK   C  M  Y  GY    PB
 Afla_books ink:   BK   C  M  Y  UV_GY UV_PB
 ```
 
-This mapping is a hardware fact to audit before every six-channel run. It does **not** prove that UV ink behaves like the former grey/photo-black ink.
+The calibration source and the raw transport must **not** be confused. The canonical source/model order is deliberately:
+
+```text
+u_source = [C, M, Y, BK, UV_GY, UV_PB]
+u_raw    = [BK, C, M, Y, UV_GY, UV_PB]
+```
+
+The Gutenprint raw adapter performs this source-to-raw reordering; its decoded output must prove it on every run. This mapping is a hardware fact to audit before every six-channel run. It does **not** prove that UV ink behaves like the former grey/photo-black ink.
 
 ## 2. Required control boundary
 
 We control **coverage fields and masks**, not individual droplets in the first implementation.
 
-For every source location `x, y`, the logical input is a six-element coverage vector:
+For every source location `x, y`, the logical input is a six-element coverage vector in the canonical source order:
 
 ```text
-u(x,y) = [BK, C, M, Y, UV_GY, UV_PB]  where each channel is in [0, 1]
+u(x,y) = [C, M, Y, BK, UV_GY, UV_PB]  where each channel is in [0, 1]
 ```
 
 - The calibration system chooses coverage values per patch/region and produces six explicit raster planes.
